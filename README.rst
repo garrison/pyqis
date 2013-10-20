@@ -22,6 +22,21 @@ And run within ipython notebook::
 
 You may wish to do this within a virtualenv.
 
+Getting started
+---------------
+
+Best run within ipython notebook
+
+.. code::
+
+    from pyqis import QuantumBitMachine
+
+    # create a 4 qubit quantum computer
+    machine = QuantumBitMachine(4)
+
+    # apply the X (NOT) gate to bit #2
+    machine.X(2)
+
 Author(s)
 ---------
 
