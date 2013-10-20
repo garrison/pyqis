@@ -44,3 +44,15 @@ class QuantumBitMachine(object):
             if i & bit:
                 state[i] = (1. + 1j) / np.sqrt(2) * state[i]
         return QuantumBitMachine.from_state(self.nqubits, state)
+
+    def H(self, register):
+        """apply the Hadamard gate on a given register"""
+        state = np.zeros(self.state.shape, dtype=complex)
+        bit = 1 << register
+        for i in range(len(state)):
+            if i & bit:
+                state[i] += -1 / np.sqrt(2) * self.state[i]
+            else:
+                state[i] += 1 / np.sqrt(2) * self.state[i]
+            state[i ^ bit] += 1 / np.sqrt(2) * self.state[i]
+        return QuantumBitMachine.from_state(self.nqubits, state)
