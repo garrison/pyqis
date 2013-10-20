@@ -1,3 +1,4 @@
+import random
 from numbers import Integral
 
 import numpy as np
@@ -56,3 +57,12 @@ class QuantumBitMachine(object):
                 state[i] += 1 / np.sqrt(2) * self.state[i]
             state[i ^ bit] += 1 / np.sqrt(2) * self.state[i]
         return QuantumBitMachine.from_state(self.nqubits, state)
+
+    def observe(self):
+        cumsum = np.cumsum(np.square(np.abs(self.state)))
+        r = random.uniform(0., cumsum[-1])
+        for i, v in enumerate(cumsum):
+            if r < v:
+                return i
+        return i  # should not be reached, generally, but may since it is
+                  # possible for random.uniform() to return cumsum[-1]
