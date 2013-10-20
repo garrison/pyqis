@@ -90,8 +90,9 @@ class QuantumBitMachine(object):
             if r < v:
                 break
 
-        # "collapse" the wavefunction
+        # "collapse" the wavefunction, keeping phase of the resulting amplitude
+        amplitude = self.state[i] / np.abs(self.state[i])
         self.state = np.zeros_like(self.state)
-        self.state[i] = 1.
+        self.state[i] = amplitude
 
         return i
