@@ -47,7 +47,7 @@ class QuantumBitMachine(object):
 
     def H(self, register):
         """apply the Hadamard gate on a given register"""
-        state = np.zeros(self.state.shape, dtype=complex)
+        state = np.zeros_like(self.state)
         bit = 1 << register
         for i in range(len(state)):
             if i & bit:
