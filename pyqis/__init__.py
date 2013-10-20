@@ -88,6 +88,10 @@ class QuantumBitMachine(object):
         r = random.uniform(0., cumsum[-1])
         for i, v in enumerate(cumsum):
             if r < v:
-                return i
-        return i  # should not be reached, generally, but may since it is
-                  # possible for random.uniform() to return cumsum[-1]
+                break
+
+        # "collapse" the wavefunction
+        self.state = np.zeros_like(self.state)
+        self.state[i] = 1.
+
+        return i
