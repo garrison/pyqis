@@ -12,14 +12,6 @@ urls = {
     "jsqis-view.css": "https://raw.github.com/garrison/jsqis/master/jsqis-view.css",
 }
 
-def realize_array(v):
-    return np.vstack((np.real(v), np.imag(v))).flatten(order="F")
-
-def json_realize_array(v):
-    return json.dumps(list(realize_array(v)))
-
-_is_initialized = False
-
 def show_state(state):
     # javascript libraries
     jsqis_lib = (
@@ -31,7 +23,11 @@ def show_state(state):
     )
 
     # prepare the json representation of the state
-    json_state = json_realize_array(state.state)
+    json_state = json.dumps({
+        "real": list(np.real(state.state)),
+        "imag": list(np.imag(state.state)),
+        "nQubits": state.nqubits,
+    })
 
     # javascript code
     code = """
@@ -45,20 +41,13 @@ def show_state(state):
 
     // convert the json representation to an amplitude list of mathjs complex numbers
     var amplitudeList = [];
-    var i, e = jsonState.length;
-    for (i = 0; i < e; i += 2) {
-        amplitudeList.push(math.complex(jsonState[i], jsonState[i + 1]));
-    }
-
-    // determine the number of qubits
-    var nQubits = 0, basisSize = 1;
-    while (basisSize < jsonState.length) {
-        nQubits += 1;
-        basisSize *= 2;
+    var i, e = jsonState.real.length;
+    for (i = 0; i < e; ++i) {
+        amplitudeList.push(math.complex(jsonState.real[i], jsonState.imag[i]));
     }
 
     // use the state to construct a jsqis QuantumBitMachine object
-    var machine = new jsqis.QuantumBitMachine(nQubits);
+    var machine = new jsqis.QuantumBitMachine(jsonState.nQubits);
     machine.amplitudeList = amplitudeList;
 
     // use jsqis-view to display the QuantumBitMachine
