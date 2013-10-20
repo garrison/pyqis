@@ -14,7 +14,7 @@ Install
 
 Install using pip::
 
-    $ pip install -e git://github.com/garrison/pyqis.git#egg=pyqis
+    $ pip install -e https://github.com/garrison/pyqis.git#egg=pyqis
 
 And run within ipython notebook::
 
