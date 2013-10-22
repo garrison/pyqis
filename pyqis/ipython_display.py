@@ -31,9 +31,14 @@ def show_state(state):
 
     # javascript code
     code = """
-    window.olddefine = window.define;
+    // workaround for http://stackoverflow.com/q/19487121/1558890
+    if (!window.olddefine) window.olddefine = window.define;
     window.define = undefined;
-    $.getScript({{{ RAPHAEL_URL }}}, function () {
+    $.ajax({
+    url: {{{ RAPHAEL_URL }}},
+    dataType: "script",
+    complete: function () { window.define = window.olddefine; },
+    success: function () {
     $.getScript({{{ JSQIS_VIEW_URL }}}, function () {
 
     // import the json representation of the state
@@ -53,10 +58,8 @@ def show_state(state):
     // use jsqis-view to display the QuantumBitMachine
     var machineView = new jsqis.QuantumBitMachineView(element[0], machine);
     container.show();
-
-    window.define = window.olddefine;
     });
-    });
+    }});
     """.replace("{{{ JSON_STATE }}}", json_state).replace("{{{ RAPHAEL_URL }}}", repr(urls["raphael"])).replace("{{{ JSQIS_VIEW_URL }}}", repr(urls["jsqis-view"]))
 
     return Javascript(code, lib=jsqis_lib, css=jsqis_css)
