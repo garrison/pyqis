@@ -21,6 +21,10 @@ class QuantumBitMachine(object):
         from pyqis.ipython_display import show_state
         return show_state(self)._repr_javascript_()
 
+    # operations may, but are not required to, modify the np.array in place.
+    # but all operations should change the state of the QuantumBitMachine,
+    # following how a quantum computer works.
+
     def X(self, register):
         """apply the NOT gate on a given register"""
         state = np.copy(self.state)
