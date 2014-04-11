@@ -10,7 +10,12 @@ setup(
     packages=[
         'pyqis',
     ],
-    install_requires=['numpy', 'ipython[notebook]', 'matplotlib'],
+    install_requires=[
+        'numpy',
+        'ipython[notebook]',
+        'matplotlib',
+        'cairocffi',
+    ],
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
