@@ -18,7 +18,7 @@ Install using pip::
 
 And run within ipython notebook::
 
-    $ ipython notebook
+    $ ipython notebook --pylab inline
 
 You may wish to do this within a virtualenv.
 
