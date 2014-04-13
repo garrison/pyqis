@@ -74,33 +74,49 @@ def render_state(state, filename, use_color=True, label_format=None, states_per_
 
         radius, phi = cmath.polar(vec[i])
 
-        rgb = cielchToRGB(80, 35, phi)
         c.save()
-        c.set_line_width(6.0)
         ctrx = col * (100 + hpadding) + 50
         ctry = row * (100 + vpadding + label_height) + 50
-        c.move_to(ctrx, ctry) # this step is only necessary because i do not
-                              # fully understand how to use pycairo :)
-        c.arc(ctrx, ctry, 45 * radius, 0, 2 * pi)
-        c.stroke_preserve()
-        c.set_source_rgb(*rgb)  # or rgba
-        c.fill()
-        c.restore()
+        c.translate(ctrx, ctry)
 
-        c.save()
-        c.move_to(ctrx, ctry)
-        c.line_to(ctrx - 45 * np.sin(phi) * radius, ctry - 45 * np.cos(phi) * radius)
-        c.close_path()
-        c.set_line_width(3.)
-        c.stroke_preserve()
-        c.fill()
-        c.restore()
+        if radius > 1e-6:
+            c.save()
+            c.scale(3.2 * radius, 3.2 * radius)
+            c.rotate(-phi)
 
-        c.save()
+            # box
+            c.save()
+            c.rectangle(-9, -9, 18, 18)
+            c.set_line_width(2.)
+            r, g, b = cielchToRGB(80, 35, phi)
+            c.set_source_rgba(r, g, b, 0.8)
+            c.fill_preserve()
+            c.set_source_rgb(0, 0, 0)
+            c.stroke()
+            c.restore()
+
+            # arrow
+            c.save()
+            c.move_to(0, -8)
+            c.line_to(5, -3)
+            c.line_to(1, -4)
+            c.line_to(1, 8)
+            c.line_to(-1, 8)
+            c.line_to(-1, -4)
+            c.line_to(-5, -3)
+            c.close_path()
+            c.set_source_rgba(0, 0, 0)
+            c.fill()
+            c.restore()
+
+            c.restore()
+
+        # label
         c.set_font_size(14)
         text_width, text_height = c.text_extents(label)[2:4]
-        c.move_to(ctrx - text_width / 2., ctry + 50 + 10 + text_height)
+        c.move_to(-text_width / 2., 50 + 10 + text_height)
         c.show_text(label)
+
         c.restore()
 
     # Save as a SVG and PNG
