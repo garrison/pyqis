@@ -38,15 +38,14 @@ def cielchToRGB(l, c, h):
     m = lambda v: max((min((1., v)), 0.))
     return (m(r), m(g), m(b))
 
-def render_state(state, filename, use_color=True, label_format=None, states_per_row=4):
-    svg_filename = None
-    png_filename = None
-    if filename.endswith(".svg"):
-        svg_filename = filename
-    elif filename.endswith(".png"):
-        png_filename = filename
-    else:
-        raise RuntimeError("Cannot determine file type from extension: %r" % filename)
+def render_state(state, png_file=None, svg_file=None, use_color=True, label_format=None, states_per_row=4):
+    """
+
+    `svg_file` and `png_file` can be either a filename or a file object.
+    """
+    if png_file is None and svg_file is None:
+        # there is nothing to do!
+        return
 
     vec = state.state / np.linalg.norm(state.state)
     basis_size = 1 << state.nqubits
@@ -65,7 +64,7 @@ def render_state(state, filename, use_color=True, label_format=None, states_per_
     img_width = cols * 100 + (cols - 1) * hpadding
     img_height = rows * (100 + label_height) + (rows - 1) * vpadding
 
-    s = cairo.SVGSurface(svg_filename, img_width, img_height)
+    s = cairo.SVGSurface(svg_file, img_width, img_height)
     c = cairo.Context(s)
 
     for i, label in enumerate(labels):
@@ -120,6 +119,6 @@ def render_state(state, filename, use_color=True, label_format=None, states_per_
         c.restore()
 
     # Save as a SVG and PNG
-    if png_filename is not None:
-        s.write_to_png(png_filename)
+    if png_file is not None:
+        s.write_to_png(png_file)
     s.finish()
