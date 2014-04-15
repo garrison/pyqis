@@ -17,9 +17,23 @@ class QuantumBitMachine(object):
         rv.state = state
         return rv
 
-    def _repr_javascript_(self):
-        from pyqis.ipython_display import show_state
-        return show_state(self)._repr_javascript_()
+    def _repr_svg_(self):
+        from io import BytesIO
+        from pyqis.cairo_render import render_state
+        s = BytesIO()
+        render_state(self, svg_file=s)
+        return s.getvalue().decode("utf-8")
+
+    def _repr_png_(self):
+        from io import BytesIO
+        from pyqis.cairo_render import render_state
+        s = BytesIO()
+        render_state(self, png_file=s)
+        return s.getvalue()
+
+    #def _repr_javascript_(self):
+    #    from pyqis.ipython_display import show_state
+    #    return show_state(self)._repr_javascript_()
 
     # operations may, but are not required to, modify the np.array in place.
     # but all operations should change the state of the QuantumBitMachine,
