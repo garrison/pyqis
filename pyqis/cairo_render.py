@@ -1,4 +1,5 @@
 import cmath
+from contextlib import contextmanager
 
 import numpy as np
 try:
@@ -37,6 +38,15 @@ def cielchToRGB(l, c, h):
     m = lambda v: max((min((1., v)), 0.))
     return (m(r), m(g), m(b))
 
+@contextmanager
+def save_context(context):
+    # from http://preshing.com/20110920/the-python-with-statement-by-example/
+    context.save()
+    try:
+        yield context
+    finally:
+        context.restore()
+
 def render_state(state, png_file=None, svg_file=None,
                  use_color=True, label_format=None, states_per_row=4):
     """Render a state to either png or svg format (or both)
@@ -73,50 +83,42 @@ def render_state(state, png_file=None, svg_file=None,
 
         radius, phi = cmath.polar(vec[i])
 
-        c.save()
-        ctrx = col * (100 + hpadding) + 50
-        ctry = row * (100 + vpadding + label_height) + 50
-        c.translate(ctrx, ctry)
+        with save_context(c):
+            ctrx = col * (100 + hpadding) + 50
+            ctry = row * (100 + vpadding + label_height) + 50
+            c.translate(ctrx, ctry)
 
-        if radius > 1e-6:
-            c.save()
-            c.scale(3.2 * radius, 3.2 * radius)
-            c.rotate(-phi)
+            # label
+            c.set_font_size(14)
+            text_width, text_height = c.text_extents(label)[2:4]
+            c.move_to(-text_width / 2., 50 + 10 + text_height)
+            c.show_text(label)
 
-            # box
-            c.save()
-            c.rectangle(-9, -9, 18, 18)
-            c.set_line_width(2.)
-            r, g, b = cielchToRGB(80, 35, phi)
-            c.set_source_rgba(r, g, b, 0.8)
-            c.fill_preserve()
-            c.set_source_rgb(0, 0, 0)
-            c.stroke()
-            c.restore()
+            if radius > 1e-6:
+                # rotate for drawing the box + arrow
+                c.scale(3.2 * radius, 3.2 * radius)
+                c.rotate(-phi)
 
-            # arrow
-            c.save()
-            c.move_to(0, -8)
-            c.line_to(5, -3)
-            c.line_to(1, -4)
-            c.line_to(1, 8)
-            c.line_to(-1, 8)
-            c.line_to(-1, -4)
-            c.line_to(-5, -3)
-            c.close_path()
-            c.set_source_rgba(0, 0, 0)
-            c.fill()
-            c.restore()
+                # box
+                c.rectangle(-9, -9, 18, 18)
+                c.set_line_width(2.)
+                r, g, b = cielchToRGB(80, 35, phi)
+                c.set_source_rgba(r, g, b, 0.8)
+                c.fill_preserve()
+                c.set_source_rgb(0, 0, 0)
+                c.stroke()
 
-            c.restore()
-
-        # label
-        c.set_font_size(14)
-        text_width, text_height = c.text_extents(label)[2:4]
-        c.move_to(-text_width / 2., 50 + 10 + text_height)
-        c.show_text(label)
-
-        c.restore()
+                # arrow
+                c.move_to(0, -8)
+                c.line_to(5, -3)
+                c.line_to(1, -4)
+                c.line_to(1, 8)
+                c.line_to(-1, 8)
+                c.line_to(-1, -4)
+                c.line_to(-5, -3)
+                c.close_path()
+                c.set_source_rgba(0, 0, 0)
+                c.fill()
 
     # Save as a SVG and PNG
     if png_file is not None:
