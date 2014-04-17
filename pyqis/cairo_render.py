@@ -1,4 +1,3 @@
-from math import pi
 import cmath
 
 import numpy as np
@@ -38,10 +37,11 @@ def cielchToRGB(l, c, h):
     m = lambda v: max((min((1., v)), 0.))
     return (m(r), m(g), m(b))
 
-def render_state(state, png_file=None, svg_file=None, use_color=True, label_format=None, states_per_row=4):
-    """
+def render_state(state, png_file=None, svg_file=None,
+                 use_color=True, label_format=None, states_per_row=4):
+    """Render a state to either png or svg format (or both)
 
-    `svg_file` and `png_file` can be either a filename or a file object.
+    `svg_file` and `png_file` can be either a filename or a binary file object.
     """
     if png_file is None and svg_file is None:
         # there is nothing to do!
