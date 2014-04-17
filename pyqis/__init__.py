@@ -10,12 +10,7 @@ class QuantumBitMachine(object):
         self.state = np.zeros([2 ** nqubits], dtype=complex)
         self.state[0] = 1.
 
-    @classmethod
-    def from_state(cls, nqubits, state):
-        assert len(state) == 2 ** nqubits
-        rv = cls(nqubits)
-        rv.state = state
-        return rv
+    # Representations for ipython notebook
 
     def _repr_svg_(self):
         from io import BytesIO
