@@ -26,10 +26,6 @@ class QuantumBitMachine(object):
         render_state(self, png_file=s)
         return s.getvalue()
 
-    #def _repr_javascript_(self):
-    #    from pyqis.ipython_display import show_state
-    #    return show_state(self)._repr_javascript_()
-
     # operations may, but are not required to, modify the np.array in place.
     # but all operations should change the state of the QuantumBitMachine,
     # following how a quantum computer works.
