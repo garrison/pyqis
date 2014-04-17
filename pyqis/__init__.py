@@ -26,9 +26,16 @@ class QuantumBitMachine(object):
         render_state(self, png_file=s)
         return s.getvalue()
 
-    # operations may, but are not required to, modify the np.array in place.
-    # but all operations should change the state of the QuantumBitMachine,
-    # following how a quantum computer works.
+    # All operations (as defined below) change the state of the
+    # QuantumBitMachine, following how a quantum computer works.  However, we
+    # take the stance that operations copy the np.array instead of modifying it
+    # in place.  Otherwise we would need to enforce unique ownership of the
+    # array somehow.
+    #
+    # Nevertheless, we try to keep unique ownership of the `self.state` array
+    # in case a user of the class decides to modify the array in place.  In
+    # short, things should behave as expected regardless of whether the user
+    # expects the array to be mutable or immutable.
 
     def X(self, register):
         """apply the NOT gate on a given register"""
@@ -40,10 +47,12 @@ class QuantumBitMachine(object):
         return self
 
     def __phase(self, register, phase):
+        state = np.copy(self.state)
         bit = 1 << register
-        for i in range(len(self.state)):
+        for i in range(len(state)):
             if i & bit:
-                self.state[i] *= phase
+                state[i] *= phase
+        self.state = state
         return self
 
     def Z(self, register):
