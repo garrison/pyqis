@@ -105,3 +105,11 @@ class QuantumBitMachine(object):
         self.state[i] = amplitude
 
         return i
+
+    # We will allow users to "cheat" and clone a quantum state, even though the
+    # laws of physics do not allow such a thing.  See
+    # http://en.wikipedia.org/wiki/No-cloning_theorem
+    def _clone(self):
+        rv = QuantumBitMachine(self.nqubits)
+        rv.state = np.copy(self.state)
+        return rv
